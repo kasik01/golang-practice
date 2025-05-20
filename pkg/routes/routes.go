@@ -22,6 +22,6 @@ func RegisterRoutes(r *gin.Engine) {
 		authorized.PUT("/tasks/:id", controllers.UpdateTask)
 		authorized.DELETE("/tasks/:id", controllers.DeleteTask)
 		authorized.GET("/tasks/export", controllers.ExportTasksExcel)
-		// authorized.GET("/tasks/:id", controllers.GetTaskById)
+		authorized.GET("/tasks/:id", controllers.GetTaskById)
 	}
 }

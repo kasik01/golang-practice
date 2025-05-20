@@ -69,22 +69,27 @@ func GetTasksByUserId(c *gin.Context) {
 	c.JSON(http.StatusOK, tasks)
 }
 
-// func GetTaskById(c *gin.Context) {
-// 	taskID := c.Param("id")
-// 	if taskID == "" {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": "Task ID is required"})
-// 		return
-// 	}
+func GetTaskById(c *gin.Context) {
+	taskIDParam := c.Param("id")
+	if taskIDParam == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Task ID is required"})
+		return
+	}
+	taskIDUint64, err := strconv.ParseUint(taskIDParam, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid task ID"})
+		return
+	}
+	taskID := uint(taskIDUint64)
+	var task models.Task
+	taskDetails, err := task.GetTaskById(taskID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
-// 	var task models.Task
-// 	taskDetails, err := task.GetTaskById(taskID)
-// 	if err != nil {
-// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-// 		return
-// 	}
-
-// 	c.JSON(http.StatusOK, taskDetails)
-// }
+	c.JSON(http.StatusOK, taskDetails)
+}
 
 func UpdateTask(c *gin.Context) {
 	taskIDParam := c.Param("id")
