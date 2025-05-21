@@ -47,8 +47,7 @@ func (t *Task) GetTaskById(taskId uint) (*Task, error) {
 	return &task, nil
 }
 
-func (t *Task) UpdateTask(taskId uint) (*Task, error) {
-	db := GetDB()
+func (t *Task) UpdateTask(db *gorm.DB, taskId uint) (*Task, error) {
 	var task Task
 	result := db.First(&task, taskId)
 	if result.Error != nil {

@@ -10,7 +10,7 @@ import (
 	"github.com/xuri/excelize/v2"
 )
 
-func CreateTask(c *gin.Context) {
+func CreateTask(c *gin.Context, db *gorm.DB) {
 	var task models.Task
 
 	if err := c.ShouldBindJSON(&task); err != nil {
@@ -114,7 +114,7 @@ func UpdateTask(c *gin.Context) {
 		return
 	}
 
-	updatedTask, err := task.UpdateTask(taskID)
+	updatedTask, err := task.UpdateTask(,taskID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
