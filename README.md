@@ -76,8 +76,7 @@ This is a RESTful API project for a Todo management application using:
 
     "refreshToken": "refreshToken"
   }
-  ``
-
+  
 ### Task (requires Authorization: Bearer <token> header)
 
 - `POST /tasks`  
