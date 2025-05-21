@@ -2,20 +2,21 @@ package routes
 
 import (
 	"todo-app/pkg/controllers"
+	"todo-app/pkg/env"
 	"todo-app/pkg/middleware"
 
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterRoutes(r *gin.Engine) {
-	auth := r.Group("/auth")
+func RegisterRoutes(cfg *env.Config) {
+	auth := cfg.Gin.Group("/auth")
 	{
 		auth.POST("/signup", controllers.SignUp)
 		auth.POST("/signin", controllers.SignIn)
 		auth.POST("/renew-token", controllers.RefreshToken)
 	}
 
-	authorized := r.Group("/")
+	authorized := cfg.Gin.Group("/")
 	authorized.Use(middleware.AuthMiddleware())
 	{
 		authorized.GET("/protected", func(c *gin.Context) {

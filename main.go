@@ -4,21 +4,17 @@ import (
 	"fmt"
 
 	"todo-app/pkg/config"
-	"todo-app/pkg/models"
+	"todo-app/pkg/env"
 	"todo-app/pkg/routes"
-
-	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	config.LoadEnv()
-	models.Connect()
-	models.InitModels()
-	router := gin.Default()
 
-	routes.RegisterRoutes(router)
+	cfg := env.GetConfig()
+	routes.RegisterRoutes(cfg)
 
 	port := config.GetAppConfig().APP_PORT
 	fmt.Println("Server running on port:", port)
-	router.Run(":" + port)
+	cfg.Gin.Run(":" + port)
 }
