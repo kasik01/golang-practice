@@ -25,12 +25,12 @@ type User struct {
 // }
 
 func (u *User) SignUp() (*User, error) {
+	db := config.GetDB()
 	hashedPassword, err := utils.HashPassword(u.Password)
 	if err != nil {
 		return nil, err
 	}
 	u.Password = hashedPassword
-	db := config.GetDB()
 	result := db.Create(u)
 	if result.Error != nil {
 		return nil, result.Error
@@ -38,20 +38,15 @@ func (u *User) SignUp() (*User, error) {
 	return u, nil
 }
 
-func (u *User) SignIn(password string) (string, error) {
+func (u *User) SignIn(password string) (*utils.TokenResponse, error) {
 	db := config.GetDB()
 	if err := db.Where("username = ?", u.Username).First(u).Error; err != nil {
-		return "", err
+		return nil, errors.New("user not found")
 	}
 
 	if !utils.CheckPasswordHash(password, u.Password) {
-		return "", errors.New("invalid password")
+		return nil, errors.New("invalid password")
 	}
 
-	token, err := utils.GenerateToken(u.ID)
-	if err != nil {
-		return "", err
-	}
-
-	return token, nil
+	return utils.GenerateToken(u.ID)
 }

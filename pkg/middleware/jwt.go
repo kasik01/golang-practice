@@ -39,8 +39,10 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
+		userID := int(userIDFloat)
+
 		// fmt.Println("claims:", claims)
-		c.Set("user_id", uint(userIDFloat))
+		c.Set("user_id", uint(userID))
 		c.Next()
 	}
 }

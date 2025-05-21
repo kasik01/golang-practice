@@ -47,17 +47,20 @@ func CreateTask(c *gin.Context) {
 }
 
 func GetTasksByUserId(c *gin.Context) {
-	userIDVal, exists := c.Get("user_id")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
+	// userIDVal, exists := c.Get("user_id") // get id from token
+
+	userIDParam := c.Param("id")
+	if userIDParam == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User ID is required"})
 		return
 	}
 
-	userID, ok := userIDVal.(uint)
-	if !ok {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid user ID"})
+	userIDUint64, err := strconv.ParseUint(userIDParam, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
 		return
 	}
+	userID := uint(userIDUint64)
 
 	var task models.Task
 	tasks, err := task.GetTaskByUserId(userID)

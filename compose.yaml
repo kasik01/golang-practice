@@ -1,32 +1,28 @@
 version: '3.8'
 
 services:
-  db:
+  postgres:
     image: postgres:15
     restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: Khoa2401_
-      POSTGRES_DB: todo_db
+    env_file: .env
     ports:
-      - "5432:5432"
+      - "$DB_PORT:$DB_PORT"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $DB_USER" ]
+      interval: 3s
+      timeout: 3s
+      retries: 3
 
   app:
     build: .
     depends_on:
-      - db
+      postgres:
+        condition: service_healthy
     ports:
-      - "8080:8080"
-    environment:
-      DB_HOST: db
-      DB_USER: postgres
-      DB_PASSWORD: Khoa2401_
-      DB_NAME: todo_db
-      DB_PORT: 5432
-      JWT_SECRET: supersecretkey
-      PORT: 8080
+      - "$APP_PORT:$APP_PORT"
+    env_file: .env
     # volumes:
     #   - .:/app
 

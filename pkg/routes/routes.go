@@ -8,8 +8,12 @@ import (
 )
 
 func RegisterRoutes(r *gin.Engine) {
-	r.POST("/signup", controllers.SignUp)
-	r.POST("/signin", controllers.SignIn)
+	auth := r.Group("/auth")
+	{
+		auth.POST("/signup", controllers.SignUp)
+		auth.POST("/signin", controllers.SignIn)
+		auth.POST("/renew-token", controllers.RefreshToken)
+	}
 
 	authorized := r.Group("/")
 	authorized.Use(middleware.AuthMiddleware())
@@ -17,11 +21,18 @@ func RegisterRoutes(r *gin.Engine) {
 		authorized.GET("/protected", func(c *gin.Context) {
 			c.JSON(200, gin.H{"message": "You are authorized"})
 		})
-		authorized.POST("/tasks", controllers.CreateTask)
-		authorized.GET("/tasks", controllers.GetTasksByUserId)
-		authorized.PUT("/tasks/:id", controllers.UpdateTask)
-		authorized.DELETE("/tasks/:id", controllers.DeleteTask)
-		authorized.GET("/tasks/export", controllers.ExportTasksExcel)
-		authorized.GET("/tasks/:id", controllers.GetTaskById)
+		tasks := authorized.Group("/tasks")
+		{
+			tasks.POST("", controllers.CreateTask)
+			tasks.GET("/export", controllers.ExportTasksExcel)
+			tasks.GET("/:id", controllers.GetTaskById)
+			tasks.PUT("/:id", controllers.UpdateTask)
+			tasks.DELETE("/:id", controllers.DeleteTask)
+		}
+		users := authorized.Group("/users")
+		{
+			users.GET("/:id/tasks", controllers.GetTasksByUserId)
+		}
 	}
+
 }

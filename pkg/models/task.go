@@ -19,8 +19,8 @@ type Task struct {
 }
 
 func (t *Task) CreateTask(userId uint) (*Task, error) {
-	t.UserID = userId
 	db := config.GetDB()
+	t.UserID = userId
 	result := db.Create(t)
 	if result.Error != nil {
 		return nil, result.Error

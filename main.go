@@ -10,13 +10,14 @@ import (
 )
 
 func main() {
+	config.LoadEnv()
 	config.Connect()
 	models.InitModels()
-
 	router := gin.Default()
 
 	routes.RegisterRoutes(router)
 
-	fmt.Println("Server running on port 8080")
-	router.Run(":8080")
+	port := config.GetAppConfig().APP_PORT
+	fmt.Println("Server running on port:", port)
+	router.Run(":" + port)
 }

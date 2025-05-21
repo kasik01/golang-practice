@@ -51,7 +51,7 @@ This is a RESTful API project for a Todo management application using:
 
 ### Auth
 
-- `POST /signup`  
+- `POST /auth/signup`  
   Register a new user  
   ```json
   {
@@ -60,7 +60,7 @@ This is a RESTful API project for a Todo management application using:
   }
   ```
 
-- `POST /signin`  
+- `POST /auth/signin`  
   Login, returns JWT  
   ```json
   {
@@ -68,6 +68,15 @@ This is a RESTful API project for a Todo management application using:
     "password": "yourpassword"
   }
   ```
+
+  - `POST /auth/renew-token`  
+  Renew token, returns JWT  
+  ```json
+  {
+
+    "refreshToken": "refreshToken"
+  }
+  ``
 
 ### Task (requires Authorization: Bearer <token> header)
 
@@ -81,7 +90,7 @@ This is a RESTful API project for a Todo management application using:
   }
   ```
 
-- `GET /tasks`  
+- `GET /users/:id/tasks`  
   Get user's tasks
 
 - `PUT /tasks/:id`  
