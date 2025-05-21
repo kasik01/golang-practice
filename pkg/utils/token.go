@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 	"time"
+	"todo-app/pkg/config"
 
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -15,15 +16,15 @@ type TokenResponse struct {
 }
 
 func GenerateToken(userID uint) (*TokenResponse, error) {
-	accessTokenExp := time.Now().Add(time.Hour * 1).Unix()
-	refreshTokenExp := time.Now().Add(time.Hour * 72).Unix()
+	accessTokenExp := time.Now().Add(time.Second * time.Duration(config.GetAppConfig().ACCESS_TOKEN_EXP)).Unix()
+	refreshTokenExp := time.Now().Add(time.Second * time.Duration(config.GetAppConfig().REFRESH_TOKEN_EXP)).Unix()
 
 	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user_id": userID,
 		"exp":     accessTokenExp,
 	})
 
-	accessTokenString, err := accessToken.SignedString([]byte(os.Getenv("JWT_SECRET")))
+	accessTokenString, err := accessToken.SignedString([]byte(config.GetAppConfig().JWT_SECRET))
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +35,7 @@ func GenerateToken(userID uint) (*TokenResponse, error) {
 		"type":    "refresh",
 	})
 
-	refreshTokenString, err := refreshToken.SignedString([]byte(os.Getenv("JWT_SECRET")))
+	refreshTokenString, err := refreshToken.SignedString([]byte(config.GetAppConfig().JWT_SECRET))
 	if err != nil {
 		return nil, err
 	}
