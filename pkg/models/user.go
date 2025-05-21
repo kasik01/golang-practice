@@ -2,7 +2,6 @@ package models
 
 import (
 	"errors"
-	"todo-app/pkg/config"
 	"todo-app/pkg/utils"
 
 	"gorm.io/gorm"
@@ -25,7 +24,7 @@ type User struct {
 // }
 
 func (u *User) SignUp() (*User, error) {
-	db := config.GetDB()
+	db := GetDB()
 	hashedPassword, err := utils.HashPassword(u.Password)
 	if err != nil {
 		return nil, err
@@ -39,7 +38,7 @@ func (u *User) SignUp() (*User, error) {
 }
 
 func (u *User) SignIn(password string) (*utils.TokenResponse, error) {
-	db := config.GetDB()
+	db := GetDB()
 	if err := db.Where("username = ?", u.Username).First(u).Error; err != nil {
 		return nil, errors.New("user not found")
 	}

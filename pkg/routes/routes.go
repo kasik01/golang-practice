@@ -21,6 +21,7 @@ func RegisterRoutes(r *gin.Engine) {
 		authorized.GET("/protected", func(c *gin.Context) {
 			c.JSON(200, gin.H{"message": "You are authorized"})
 		})
+
 		tasks := authorized.Group("/tasks")
 		{
 			tasks.POST("", controllers.CreateTask)
@@ -29,6 +30,7 @@ func RegisterRoutes(r *gin.Engine) {
 			tasks.PUT("/:id", controllers.UpdateTask)
 			tasks.DELETE("/:id", controllers.DeleteTask)
 		}
+
 		users := authorized.Group("/users")
 		{
 			users.GET("/:id/tasks", controllers.GetTasksByUserId)

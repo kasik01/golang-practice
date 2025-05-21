@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	"todo-app/pkg/config"
 	"todo-app/pkg/models"
 	"todo-app/pkg/routes"
@@ -11,7 +12,7 @@ import (
 
 func main() {
 	config.LoadEnv()
-	config.Connect()
+	models.Connect()
 	models.InitModels()
 	router := gin.Default()
 

@@ -2,7 +2,6 @@ package models
 
 import (
 	"time"
-	"todo-app/pkg/config"
 
 	"gorm.io/gorm"
 )
@@ -19,7 +18,7 @@ type Task struct {
 }
 
 func (t *Task) CreateTask(userId uint) (*Task, error) {
-	db := config.GetDB()
+	db := GetDB()
 	t.UserID = userId
 	result := db.Create(t)
 	if result.Error != nil {
@@ -29,7 +28,7 @@ func (t *Task) CreateTask(userId uint) (*Task, error) {
 }
 
 func (t *Task) GetTaskByUserId(userId uint) ([]Task, error) {
-	db := config.GetDB()
+	db := GetDB()
 	var tasks []Task
 	result := db.Where("user_id = ?", userId).Find(&tasks)
 	if result.Error != nil {
@@ -39,7 +38,7 @@ func (t *Task) GetTaskByUserId(userId uint) ([]Task, error) {
 }
 
 func (t *Task) GetTaskById(taskId uint) (*Task, error) {
-	db := config.GetDB()
+	db := GetDB()
 	var task Task
 	result := db.First(&task, taskId)
 	if result.Error != nil {
@@ -49,7 +48,7 @@ func (t *Task) GetTaskById(taskId uint) (*Task, error) {
 }
 
 func (t *Task) UpdateTask(taskId uint) (*Task, error) {
-	db := config.GetDB()
+	db := GetDB()
 	var task Task
 	result := db.First(&task, taskId)
 	if result.Error != nil {
@@ -69,7 +68,7 @@ func (t *Task) UpdateTask(taskId uint) (*Task, error) {
 }
 
 func (t *Task) DeleteTask(taskId uint) error {
-	db := config.GetDB()
+	db := GetDB()
 	result := db.Delete(&Task{}, taskId)
 	if result.Error != nil {
 		return result.Error
