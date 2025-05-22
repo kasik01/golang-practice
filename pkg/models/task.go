@@ -17,8 +17,7 @@ type Task struct {
 	User        User      `gorm:"foreignKey:UserID" json:"-"`
 }
 
-func (t *Task) CreateTask(userId uint) (*Task, error) {
-	db := GetDB()
+func (t *Task) CreateTask(userId uint, db *gorm.DB) (*Task, error) {
 	t.UserID = userId
 	result := db.Create(t)
 	if result.Error != nil {
@@ -27,8 +26,7 @@ func (t *Task) CreateTask(userId uint) (*Task, error) {
 	return t, nil
 }
 
-func (t *Task) GetTaskByUserId(userId uint) ([]Task, error) {
-	db := GetDB()
+func (t *Task) GetTaskByUserId(userId uint, db *gorm.DB) ([]Task, error) {
 	var tasks []Task
 	result := db.Where("user_id = ?", userId).Find(&tasks)
 	if result.Error != nil {
@@ -37,8 +35,7 @@ func (t *Task) GetTaskByUserId(userId uint) ([]Task, error) {
 	return tasks, nil
 }
 
-func (t *Task) GetTaskById(taskId uint) (*Task, error) {
-	db := GetDB()
+func (t *Task) GetTaskById(taskId uint, db *gorm.DB) (*Task, error) {
 	var task Task
 	result := db.First(&task, taskId)
 	if result.Error != nil {
@@ -47,8 +44,7 @@ func (t *Task) GetTaskById(taskId uint) (*Task, error) {
 	return &task, nil
 }
 
-func (t *Task) UpdateTask(taskId uint) (*Task, error) {
-	db := GetDB()
+func (t *Task) UpdateTask(taskId uint, db *gorm.DB) (*Task, error) {
 	var task Task
 	result := db.First(&task, taskId)
 	if result.Error != nil {
@@ -67,8 +63,7 @@ func (t *Task) UpdateTask(taskId uint) (*Task, error) {
 	return &task, nil
 }
 
-func (t *Task) DeleteTask(taskId uint) error {
-	db := GetDB()
+func (t *Task) DeleteTask(taskId uint, db *gorm.DB) error {
 	result := db.Delete(&Task{}, taskId)
 	if result.Error != nil {
 		return result.Error

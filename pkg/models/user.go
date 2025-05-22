@@ -15,16 +15,7 @@ type User struct {
 	Tasks    []Task `json:"tasks,omitempty"`
 }
 
-// var db *gorm.DB
-
-// func init() {
-// 	config.Connect()
-// 	db = config.GetDB()
-// 	db.AutoMigrate(&User{}, &Task{})
-// }
-
-func (u *User) SignUp() (*User, error) {
-	db := GetDB()
+func (u *User) SignUp(db *gorm.DB) (*User, error) {
 	hashedPassword, err := utils.HashPassword(u.Password)
 	if err != nil {
 		return nil, err
@@ -37,8 +28,7 @@ func (u *User) SignUp() (*User, error) {
 	return u, nil
 }
 
-func (u *User) SignIn(password string) (*utils.TokenResponse, error) {
-	db := GetDB()
+func (u *User) SignIn(password string, db *gorm.DB) (*utils.TokenResponse, error) {
 	if err := db.Where("username = ?", u.Username).First(u).Error; err != nil {
 		return nil, errors.New("user not found")
 	}

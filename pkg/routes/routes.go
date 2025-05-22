@@ -3,19 +3,20 @@ package routes
 import (
 	"todo-app/pkg/controllers"
 	"todo-app/pkg/middleware"
+	"todo-app/pkg/models"
 
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterRoutes(r *gin.Engine) {
-	auth := r.Group("/auth")
+func RegisterRoutes(cfg *models.Config) {
+	auth := cfg.Gin.Group("/auth")
 	{
-		auth.POST("/signup", controllers.SignUp)
-		auth.POST("/signin", controllers.SignIn)
+		auth.POST("/signup", controllers.SignUp(cfg.Db))
+		auth.POST("/signin", controllers.SignIn(cfg.Db))
 		auth.POST("/renew-token", controllers.RefreshToken)
 	}
 
-	authorized := r.Group("/")
+	authorized := cfg.Gin.Group("/")
 	authorized.Use(middleware.AuthMiddleware())
 	{
 		authorized.GET("/protected", func(c *gin.Context) {
@@ -24,17 +25,16 @@ func RegisterRoutes(r *gin.Engine) {
 
 		tasks := authorized.Group("/tasks")
 		{
-			tasks.POST("", controllers.CreateTask)
-			tasks.GET("/export", controllers.ExportTasksExcel)
-			tasks.GET("/:id", controllers.GetTaskById)
-			tasks.PUT("/:id", controllers.UpdateTask)
-			tasks.DELETE("/:id", controllers.DeleteTask)
+			tasks.POST("", controllers.CreateTask(cfg.Db))
+			tasks.GET("/export", controllers.ExportTasksExcel(cfg.Db))
+			tasks.GET("/:id", controllers.GetTaskById(cfg.Db))
+			tasks.PUT("/:id", controllers.UpdateTask(cfg.Db))
+			tasks.DELETE("/:id", controllers.DeleteTask(cfg.Db))
 		}
 
 		users := authorized.Group("/users")
 		{
-			users.GET("/:id/tasks", controllers.GetTasksByUserId)
+			users.GET("/:id/tasks", controllers.GetTasksByUserId(cfg.Db))
 		}
 	}
-
 }
